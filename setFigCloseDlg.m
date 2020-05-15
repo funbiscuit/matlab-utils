@@ -7,7 +7,7 @@ set(fig,'CloseRequestFcn', f);
 end
 
 
-function figCloseReq(~,~,title,msg,y,n)
+function figCloseReq(p1,p2,title,msg,y,n)
    selection = questdlg(title,msg,y,n,n); 
    switch selection 
       case y
