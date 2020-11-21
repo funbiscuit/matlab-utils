@@ -64,11 +64,13 @@ end
 
 function setFigureSize(sz)
 %obtain screen dpi
+units=get(0,'units');
 set(0,'units','pixels')
 Pix_SS = get(0,'screensize');
 set(0,'units','inches');
 Inch_SS = get(0,'screensize');
 Res = Pix_SS./Inch_SS;
+set(0,'units',units);
 
 cm2px = Res(end)/2.54;
 
