@@ -693,139 +693,28 @@ for s = 1:Sets
 	end
 end
 
-% =========================================================================
-% ===== Check for new updates =============================================
-% =========================================================================
-
-% This feature check for a new version of distFig. It is only an attempt,
-% so it might not work without bugs. It can be disables by setting the
-% variable below called "Update" to "false" or by deleting this whole
-% section - this won't affect the rest of the function.
-%
-% It generates a .txt file called "distFig_Update.txt" located in the same
-% folder as distFig.m, which holds the date for the last time the function
-% checked for updates. In order to not check for updates all the time, the
-% function only does this ONCE every 7 days (variable "Check_Interval"),
-% and at max once for every started MATLAB session. Also, it uses appdata,
-% so if you're using this as well, it might display messages multiple times
-% within a session, if an update is available, if appdata is deleted.
-%
-% The update feature works by scanning the file exchange page for distFig
-% for a string value called "datePublished", and compares it to the date of
-% the current version (variable "Date_Current"). If these are not the same,
-% a hyperlink will be shown to the function page on file exchange page. It
-% thus depends on a very specific format, which might differ(?) from
-% different languages - I'm not aware whether this is true, so please
-% contact me on AndersSSimonsen@GMail.com if you find this to be true, so I
-% can fix the feature. :)
-
-% ===== DISABLE THE UPDATE FEATURE BY SETTING THIS VALUE TO false =========
-Update = false;
-% ===== DISABLE THE UPDATE FEATURE BY SETTING THIS VALUE TO false =========
-
-if (Update)
-	try
-		% ===== Initialize ================================================
-		Date_Current = [2015,03,31];
-		Check_Interval = 7;
-		Check = false;
-		
-		% ===== Path of update file =======================================
-		Path = mfilename('fullpath');
-		Path = sprintf('%s\\distFig_Update.txt',Path(1:end-numel('\distFig')));
-		
-		if (isempty(getappdata(0,'distFig_Update')))
-			% ===== Set appdata ===========================================
-			setappdata(0,'distFig_Update',1);
-			
-			% ===== Read update file ======================================
-			File_ID = fopen(Path,'r');
-			Clock = clock;
-			Date_Today = Clock(1:3);
-			if (File_ID == (-1))
-				% ===== Generate update file ==============================
-				File_ID = fopen(Path,'w');
-				fprintf(File_ID,'%d %d %d',Date_Today(1),Date_Today(2),Date_Today(3));
-				fclose(File_ID);
-				Check = true;
-			else
-				% ===== Read last date ====================================
-				Data = textscan(File_ID,'%s','delimiter','');
-				if (strcmp(Data{1},'DISABLE'))
-					Check = false;
-				else
-					Date_Last_Checked = cell2mat(textscan(Data{1}{1},'%f %f %f'));
-					
-					% ===== Write new date ================================
-					File_ID = fopen(Path,'w');
-					fprintf(File_ID,'%d %d %d',Date_Today(1),Date_Today(2),Date_Today(3));
-					fclose(File_ID);
-					
-					% ===== Check for new updates? ========================
-					Days_Elapsed = etime([Date_Today,zeros(1,3)],[Date_Last_Checked,zeros(1,3)]) / (60^2 * 24);
-					if (Days_Elapsed > Check_Interval)
-						Check = true;
-					end
-				end
-			end
-			
-			% ===== Check for updates =====================================
-			if (Check)
-				% ===== Read File Exchange date ===========================
-				Data = urlread('http://se.mathworks.com/matlabcentral/fileexchange/37176-distribute-figures');
-				Temp = Data((-1:100) + regexp(Data,'datePublished'));
-				Date_Online = cell2mat(textscan(Temp(26:end),'%f-%f-%f'));
-				
-				% ===== New update available? =============================
-				if (~all(Date_Current == Date_Online))
-					setappdata(0,'distFig_Update',2);
-					setappdata(0,'distFig_Online_Date',Date_Online);
-				end
-			end
-		end
-		
-		% ===== Message ===================================================
-		if (getappdata(0,'distFig_Update') == 2)
-			try
-				% ===== New version =======================================
-				Date_Online = getappdata(0,'distFig_Online_Date');
-				fprintf('New update available for distFig! ');
-				disp('<a href = "http://se.mathworks.com/matlabcentral/fileexchange/37176-distribute-figures">Download here</a>')
-				fprintf('\tCurrent version date:\t%02.0f-%02.0f-%02.0f\n',Date_Current(1),Date_Current(2),Date_Current(3));
-				fprintf('\tOnline version date:\t%02.0f-%02.0f-%02.0f\n',Date_Online(1),Date_Online(2),Date_Online(3));
-				
-				% ===== Postpone ==========================================
-				fprintf('Click here to postpone this message for %d days: ',Check_Interval);
-				Command = sprintf([...
-					'setappdata(0,''distFig_Update'',1);',...
-					'fprintf(''distFig update message postponed for %d days!\\n'');'
-					],Check_Interval);
-				disp(sprintf('<a href="matlab:%s">Postpone update message</a>',Command)); %#ok<DSPS>
-				
-				% ===== Disable ===========================================
-				fprintf('Click here to disable the update feature forever: ');
-				Command = sprintf([...
-					'File_ID = fopen(''%s'',''w'');',...
-					'fprintf(File_ID,''DISABLE'');',...
-					'fclose(File_ID);',...
-					'setappdata(0,''distFig_Update'',1);',...
-					'fprintf(''distFig update feature disabled!\\n'');'
-					],Path);
-				disp(sprintf('<a href="matlab:%s">Disable update feature</a>',Command)); %#ok<DSPS>
-			catch
-				setappdata(0,'distFig_Update',1);
-			end
-		end
-	catch Error %#ok<NASGU>
-		% ===== Error handling ============================================
-		try
-			Path_Error = [Path(1:end-numel('\distFig_Update.txt')),'\distFig_Error.mat'];
-			fprintf([
-				'There was an error in distFig when checking for updates.',...
-				'\nPlease report this to AndersSSimonsen@GMail.com by sending the error-file "distFig_Error.mat" located in %s. :)\n\n'],Path_Error);
-			AppData = getappdata(0); %#ok<NASGU>
-			save(Path_Error);
-		catch
-		end
-	end
-end
+%% LICENSE
+% Copyright (c) 2015, Anders Simonsen
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
+% met:
+% 
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in
+%       the documentation and/or other materials provided with the distribution
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.

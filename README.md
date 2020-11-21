@@ -22,3 +22,6 @@ git clone https://funbiscuit@bitbucket.org/funbiscuit/matlab-utils.git
 Now you can run any function from this library in your code.
 
 For some external packages there are folders with their license terms and some samples (if any).
+
+## LICENSE
+All files (except ones that have their own license inside them) are licensed under MIT license.
