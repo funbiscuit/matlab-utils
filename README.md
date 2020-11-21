@@ -15,8 +15,10 @@ git clone https://funbiscuit@bitbucket.org/funbiscuit/matlab-utils.git
 ```
 
 1. Launch MATLAB
-1. On the Home tab, in the Environment section, click Set Path
-1. Click Add Folder, navigate to cloned library and click OK
-1. Library is ready to use
+2. On the Home tab, in the Environment section, click Set Path
+3. Click Add Folder, navigate to cloned library and click OK (do NOT use "Add with subfolders" option)
+4. Library is ready to use
 
 Now you can run any function from this library in your code.
+
+For some external packages there are folders with their license terms and some samples (if any).
