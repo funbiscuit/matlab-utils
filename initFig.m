@@ -10,4 +10,4 @@ clf
 hold on
 grid on
 set(gca,'FontSize',10);
-set(gca,'DefaultLineLineWidth',1.5);
+set(gcf,'DefaultLineLineWidth',1.5);

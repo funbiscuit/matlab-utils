@@ -28,18 +28,16 @@ end
 % save previous values of figure and axes positions
 fig = gcf; ax = gca;
 figPos = fig.Position; axPos = ax.Position;
-if sz(1)~=0
-    % sets figure size in that way so it will be printed to size sz in cm
-    setFigureSize(sz)
-end
+
+% sets figure size in that way so it will be printed to size sz in cm
+setFigureSize(sz)
+
 
 print('-dpng',sprintf('-r%d',dpi),filename)
 
 %restore figure ans axes positions
 ax.Position = axPos;
-if sz(1)~=0
-    fig.Position = figPos;
-end
+fig.Position = figPos;
 
 function sz=convertSize(sizeArg)
 
@@ -63,6 +61,8 @@ else
 end
 
 function setFigureSize(sz)
+% if sz contains 0, size will not be set
+
 %obtain screen dpi
 units=get(0,'units');
 set(0,'units','pixels')
@@ -78,8 +78,9 @@ fig = gcf;
 ax = gca;
 
 figPos = fig.Position;
-
-fig.Position = [figPos(1) figPos(2) sz(1)*cm2px sz(2)*cm2px];
+if sz(1)>0 && sz(2)>0
+    fig.Position = [figPos(1) figPos(2) sz(1)*cm2px sz(2)*cm2px];
+end
 outerpos = ax.OuterPosition;
 ti = ax.TightInset;
 left = outerpos(1) + ti(1);
