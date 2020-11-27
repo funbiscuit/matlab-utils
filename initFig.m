@@ -1,5 +1,9 @@
-function f=initFig(id)
+function varargout=initFig(id)
 % id - id of figure
+
+if nargout>1
+    error('Two many output arguments!');
+end
 
 if ~exist('id','var') || isempty(id)
     f=figure();
@@ -10,4 +14,8 @@ clf
 hold on
 grid on
 set(gca,'FontSize',10);
-set(gcf,'DefaultLineLineWidth',1.5);
+set(f,'DefaultLineLineWidth',1.5);
+
+if nargout==1
+    varargout{1}=f;
+end
