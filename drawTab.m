@@ -4,7 +4,7 @@ function drawTab(labels,varargin)
 % Anchor    - can be C N S W E NW SW NE SW
 % MarginIn  - space between cells inside table
 % MarginOut - space between cell and table border
-% Grid      - can be V - vertical, H - horizontal, A - all
+% Grid      - can be V - vertical, H - horizontal, A - all, N - none
 
 
 parser = inputParser;
@@ -12,7 +12,7 @@ addOptional(parser,'Pos',[0 0]);
 addOptional(parser, 'Anchor', 'NW');
 addOptional(parser, 'MarginIn', [-1 -1]);
 addOptional(parser, 'MarginOut', [-1 -1]);
-addOptional(parser, 'Grid', 'A');
+addOptional(parser, 'Grid', 'N');
 addOptional(parser, 'BG', [1 1 1]);
 addOptional(parser, 'Border', [0 0 0]);
 addOptional(parser, 'FontSize', 10);
@@ -39,7 +39,7 @@ if(length(gridVal(:))~=1)
     error('Bad grid value: %s', gridVal);
 end
 
-if gridVal~='V' && gridVal~='H' && gridVal~='A'
+if gridVal~='V' && gridVal~='H' && gridVal~='A' && gridVal~='N'
     error('Bad grid value: %s', gridVal);
 end
 
