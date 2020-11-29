@@ -12,5 +12,9 @@ initFig(1);
 xlim([0 10])
 ylim([0 8]);
 
-drawTab(labels,'pos',[2 7],'anchor','nw','marginin',[0.2 0.2],...
+h=drawTab(labels,'pos',[2 7],'anchor','nw','marginin',[0.2 0.2],...
     'bg',[1 0.99 0.95],'border',[0.5 0.2 0],'grid','h','fontsize',11);
+%% delete table
+for k=1:length(h)
+    delete(h{k})
+end

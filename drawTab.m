@@ -1,11 +1,16 @@
-function drawTab(labels,varargin)
+function varargout=drawTab(labels,varargin)
 % possible options:
 % Pos       - position of anchor, should be vector with two values (x and y)
 % Anchor    - can be C N S W E NW SW NE SW
 % MarginIn  - space between cells inside table
 % MarginOut - space between cell and table border
 % Grid      - can be V - vertical, H - horizontal, A - all, N - none
+% outputs handles to all created objects
+% to delete table just delete each handle
 
+if nargout>1
+    error('Two many output arguments!');
+end
 
 parser = inputParser;
 addOptional(parser,'Pos',[0 0]);
@@ -145,6 +150,8 @@ r.Position(1:2)=r.Position(1:2)+offset;
 r.FaceColor=bgColor;
 r.EdgeColor=bdColor;
 
+edges={};
+
 if gridVal=='H' || gridVal=='A'
     % plot internal boundaries (horizontal)
     for kr=1:sz(1)-1
@@ -152,7 +159,7 @@ if gridVal=='H' || gridVal=='A'
         x2=r.Position(1)+r.Position(3);
         posY=cellPars{kr,1}(2)-cellPars{kr,1}(4)/2;
         
-        plot([x1 x2],[1 1]*(posY-marginInternal(2)/2),'linewidth',0.5,...
+        edges{end+1}=plot([x1 x2],[1 1]*(posY-marginInternal(2)/2),'linewidth',0.5,...
             'color',bdColor);
     end
 end
@@ -164,7 +171,23 @@ if gridVal=='V' || gridVal=='A'
         y2=r.Position(2)+r.Position(4);
         posX=cellPars{1,kc}(1)+cellPars{1,kc}(3)/2;
         
-        plot([1 1]*(posX+marginInternal(1)/2),[y1 y2],'linewidth',0.5,...
+        edges{end+1}=plot([1 1]*(posX+marginInternal(1)/2),[y1 y2],'linewidth',0.5,...
             'color',bdColor);
     end
 end
+
+if nargout==1
+    allHandles=cell(1+sz(1)*sz(2)+length(edges),1);
+    allHandles{1}=r;
+    l=2;
+    for k=1:sz(1)*sz(2)
+        allHandles{l}=ht{k};
+        l=l+1;
+    end
+    for k=1:length(edges)
+        allHandles{l}=edges{k};
+        l=l+1;
+    end
+    varargout{1}=allHandles;
+end
+
