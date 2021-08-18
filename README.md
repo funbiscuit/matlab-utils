@@ -11,7 +11,7 @@ These instructions will add this library to MATLAB Search Path so they can be us
 Clone the library to any folder you like:
 
 ```
-git clone https://funbiscuit@bitbucket.org/funbiscuit/matlab-utils.git
+git clone https://github.com/funbiscuit/matlab-utils.git
 ```
 
 1. Launch MATLAB
