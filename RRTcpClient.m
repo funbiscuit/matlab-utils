@@ -20,6 +20,12 @@ classdef RRTcpClient < handle
     %     % Send request and receive response
     %     response = client.sendRequest(request);
     
+    properties
+        % whether to automatically throw an error if
+        % received response contains 'error' field
+        throwErrors = false;
+    end
+    
     properties (SetAccess = private)
         tcpObj
         
@@ -59,6 +65,9 @@ classdef RRTcpClient < handle
             end
             response = obj.responses(id);
             remove(obj.responses, id);
+            if obj.throwErrors && isfield(response,'error')
+                error(response.error);
+            end
         end
         
         function delete(obj)
