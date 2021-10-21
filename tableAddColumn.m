@@ -6,38 +6,34 @@ function tab=tableAddColumn(tab, name, data)
 % tab=tableAddColumn(tab,'col2',{'test'});
 % % add column with specific data for each element
 % tab=tableAddColumn(tab,'col3',vecOrCell);
+% % add column with multiple values
+% tab=tableAddColumn(tab,'col4',[1 2 3 4]);
+% tab=tableAddColumn(tab,'col5',{1 2 3 4});
 
 szData=size(data);
-szTab=size(tab);
 
 % number of elements in single column
-sz=szTab(1);
+sz=height(tab);
 
-% if this is a row vector, just transpose it
-if szData(1)==1 && szData(2)>1
-    data=data.';
-    szData=size(data);
-end
-
-if szData(2)~=1 && szData(2)~=0
+if szData(2)<1
     error('data has invalid number of columns');
 end
 
-column=[];
-if szData(2) ~= 1 || szData(1) ~= sz
+if szData(1) ~= sz
     if isnumeric(data)
-        column=zeros(sz,1);
-        column(:)=NaN;
+        column=zeros(sz,szData(2));
     elseif iscell(data)
-        column=cell(sz,1);
+        column=cell(sz,szData(2));
     else
         error('Can''t resize data, unsupported type');
     end
 else
     column=data;
 end
-if szData(1) == 1 && szData(2) == 1
-   column(:)=data(1);
+if szData(1) == 1
+    for k=1:sz
+        column(k,:)=data;
+    end
 end
 
 tab=addvars(tab,column,'NewVariableNames',{name});
