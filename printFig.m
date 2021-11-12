@@ -24,11 +24,21 @@ if(length(ind)==1)
         mkdir(dirname);
     end
 end
-
+drawnow
 % save previous values of figure and axes positions
-fig = gcf; ax = gca;
-figPos = fig.Position; axPos = ax.Position;
-
+fig = gcf; ax = fig.Children;
+figPos = fig.Position;
+axPos = zeros(size(ax, 1), 4);
+useOuter = zeros(size(ax, 1), 1);
+for k=1:length(ax)
+    useOuter(k) = strcmp(ax(k).ActivePositionProperty, 'outerposition');
+    if useOuter(k)
+        axPos(k, :)=ax(k).OuterPosition;
+    else
+        axPos(k, :)=ax(k).Position;
+        ax(k).Position = axPos(k,:);
+    end
+end
 % sets figure size in that way so it will be printed to size sz in cm
 setFigureSize(sz)
 
@@ -36,8 +46,15 @@ setFigureSize(sz)
 print('-dpng',sprintf('-r%d',dpi),filename)
 
 %restore figure ans axes positions
-ax.Position = axPos;
+for k=1:length(ax)
+    if useOuter(k)
+        ax(k).OuterPosition = axPos(k, :);
+    else
+        ax(k).Position = axPos(k, :);
+    end
+end
 fig.Position = figPos;
+drawnow
 
 function sz=convertSize(sizeArg)
 
@@ -75,17 +92,44 @@ set(0,'units',units);
 cm2px = Res(end)/2.54;
 
 fig = gcf;
-ax = gca;
+ax = fig.Children;
 
 figPos = fig.Position;
 if sz(1)>0 && sz(2)>0
-    fig.Position = [figPos(1) figPos(2) sz(1)*cm2px sz(2)*cm2px];
+    newSize = [sz(1)*cm2px sz(2)*cm2px];
+    fig.Position = [figPos(1) figPos(2)+figPos(4)-newSize(2) newSize];
 end
-outerpos = ax.OuterPosition;
-ti = ax.TightInset;
-left = outerpos(1) + ti(1);
-bottom = outerpos(2) + ti(2);
-ax_width = outerpos(3) - ti(1) - ti(3);
-ax_height = outerpos(4) - ti(2) - ti(4);
-ax.Position = [left bottom ax_width ax_height];
 
+drawnow
+
+% find coordinates of bounding region of axes
+outLeft=1;
+outRight=0;
+outBottom=1;
+outTop=0;
+
+for k=1:length(ax)
+    pos = ax(k).Position;
+    ti = ax(k).TightInset;
+    disp(pos)
+    left = pos(1) - ti(1);
+    bottom = pos(2) - ti(2);
+    width = pos(3) + ti(1) + ti(3);
+    height = pos(4) + ti(2) + ti(4);
+    outLeft=min(outLeft, left);
+    outBottom=min(outBottom, bottom);
+    outRight=max(outRight, left + width);
+    outTop=max(outTop, bottom + height);
+end
+
+offset=[-outLeft, -outBottom];
+scale=1./([outRight outTop]+offset);
+
+for k=1:length(ax)
+    pos=ax(k).Position;
+    posBL=pos(1:2);
+    posTR=posBL+pos(3:4);
+    posBL=(posBL+offset).*scale;
+    posTR=(posTR+offset).*scale;
+    ax(k).Position=[posBL posTR-posBL];
+end
