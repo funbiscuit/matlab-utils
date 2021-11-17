@@ -111,7 +111,6 @@ outTop=0;
 for k=1:length(ax)
     pos = ax(k).Position;
     ti = ax(k).TightInset;
-    disp(pos)
     left = pos(1) - ti(1);
     bottom = pos(2) - ti(2);
     width = pos(3) + ti(1) + ti(3);
