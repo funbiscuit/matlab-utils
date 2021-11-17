@@ -26,7 +26,7 @@ if(length(ind)==1)
 end
 drawnow
 % save previous values of figure and axes positions
-fig = gcf; ax = fig.Children;
+fig = gcf; ax = findobj(fig.Children, '-depth', 1, 'type', 'axes');
 figPos = fig.Position;
 axPos = zeros(size(ax, 1), 4);
 useOuter = zeros(size(ax, 1), 1);
@@ -92,7 +92,7 @@ set(0,'units',units);
 cm2px = Res(end)/2.54;
 
 fig = gcf;
-ax = fig.Children;
+ax = findobj(fig.Children, '-depth', 1, 'type', 'axes');
 
 figPos = fig.Position;
 if sz(1)>0 && sz(2)>0
